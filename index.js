@@ -8,34 +8,19 @@ const run = (cmd) => {
     });
 }
 
-const bundle = (file) => {
-    console.log(`Bundling ${file}...`);
-    const fs = require("fs");
-    const match = (x) => x.match(/include_base64\(["']+([\.a-z_\-\/\\ ]*)["']+\)[;]+/i);
-    const lines = String(fs.readFileSync(file))
-        .split("\n")
-        .map((line) => {
-            let res = match(line);
-            if (res != null) {
-                const data = fs.readFileSync(res[1], "base64");
-                line = line.replace(res[0], JSON.stringify(data));
-            }
-            return line;
-        });
-    fs.writeFileSync(file.replace(".ts", ".m.ts"), lines.join("\n"), { flag: "w+" });
-};
-
 const BUILD_DEFAULTS = {
     input: "src/smart-contract.ts",
+    input_zip: "site.zip",
     output: "build/smart-contract.wasm",
+    output_zip: "website.zip",
 };
 
-const COMPILER_OPTIONS = "--transform json-as/transform --target release --exportRuntime";
+const COMPILER_OPTIONS = "--transform mscl-as-transformer --transform json-as/transform --target release --exportRuntime";
 
 require("yargs").scriptName("massa-sc-scripts")
     .usage("$0 <cmd> [args]")
     .command(
-        "build [input] [output]",
+        "build-sc [input] [output]",
         "",
         (yargs) => {
             yargs.positional("input", {
@@ -52,7 +37,7 @@ require("yargs").scriptName("massa-sc-scripts")
                 `asc ${argv.input} ${COMPILER_OPTIONS} --binaryFile ${((argv) => {
                     if (
                         argv.input != BUILD_DEFAULTS.input &&
-                        argv.input == BUILD_DEFAULTS.output
+                        argv.output == BUILD_DEFAULTS.output
                     ) {
                         return `build/${require("path").parse(argv.input).name}.wasm`;
                     }
@@ -60,10 +45,33 @@ require("yargs").scriptName("massa-sc-scripts")
                 })(argv)}`
             )
     )
-    .command("bundle", "", () => {
-        bundle(`${process.cwd()}/src/main.ts`);
-        run(`asc src/main.m.ts ${COMPILER_OPTIONS} --binaryFile build/main.wasm`);
-        run("rm src/main.m.ts");
-    })
+    .command(
+        "build-website-sc [zip_of_website] [output]",
+        "",
+        (yargs) => {
+            yargs.positional("zip_of_website", {
+                type: "string",
+                default: BUILD_DEFAULTS.input,
+            });
+            yargs.positional("output", {
+                type: "string",
+                default: BUILD_DEFAULTS.output,
+            });
+        },
+        (argv) =>
+        run(`echo "import { include_base64, print, Storage } from 'massa-sc-std';
+
+            function createWebsite(): void {
+                const bytes = include_base64('${argv.zip_of_website}');
+                Storage.set_data('massa_web', bytes);
+            }
+            
+            export function main(_args: string): i32 {
+                createWebsite();
+                print('Uploaded site');
+                return 0;
+            }" > website.ts && massa-sc-scripts build-sc website.ts ${argv.output} && rm website.ts`
+        ),
+    )
     .command("clean", "", () => run(`rm -rf assembly/*.m.ts build ledger.json`))
     .help().argv;
