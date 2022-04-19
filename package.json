@@ -13,6 +13,6 @@
     "mscl-as-transformer": "0.0.1"
   },
   "scripts": {
-      "test": "npx massa-sc-create test && cd test && npm uninstall massa-sc-script && npm install --save .. && npm run build && npm run bundle && npm run clean"
+      "test": "npx massa-sc-create test && cd test && npm uninstall massa-sc-script && npm install --save .. && npm run build && npm run clean"
   }
 }
