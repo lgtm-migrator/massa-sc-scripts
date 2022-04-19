@@ -9,7 +9,8 @@
     "massa-sc-scripts": "index.js"
   },
   "dependencies": {
-    "yargs": "^17.3.1"
+    "yargs": "^17.3.1",
+    "mscl-as-transformer": "0.0.1"
   },
   "scripts": {
       "test": "npx massa-sc-create test && cd test && npm run build && npm run clean"
