@@ -59,7 +59,7 @@ require("yargs").scriptName("massa-sc-scripts")
             });
         },
         (argv) =>
-        run(`echo "import { include_base64, print, Storage } from 'massa-sc-std';
+        run(`echo "import { include_base64, generate_event, Storage } from 'massa-sc-std';
 
             function createWebsite(): void {
                 const bytes = include_base64('${argv.zip_of_website}');
@@ -68,7 +68,7 @@ require("yargs").scriptName("massa-sc-scripts")
             
             export function main(_args: string): i32 {
                 createWebsite();
-                print('Uploaded site');
+                generate_event('Uploaded site');
                 return 0;
             }" > website.ts && massa-sc-scripts build-sc website.ts ${argv.output} && rm website.ts`
         ),
