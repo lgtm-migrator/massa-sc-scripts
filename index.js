@@ -13,6 +13,7 @@ const BUILD_DEFAULTS = {
     input_zip: "site.zip",
     output: "build/smart-contract.wasm",
     output_zip: "website.zip",
+    runtime: "stub", // by default, use the minimal runtime requirements
 };
 
 const COMPILER_OPTIONS = "--transform mscl-as-transformer --transform json-as/transform --target release --exportRuntime";
@@ -31,10 +32,14 @@ require("yargs").scriptName("massa-sc-scripts")
                 type: "string",
                 default: BUILD_DEFAULTS.output,
             });
+            yargs.positional("runtime", {
+                type: "string",
+                default: BUILD_DEFAULTS.runtime,
+            });
         },
         (argv) =>
             run(
-                `asc ${argv.input} ${COMPILER_OPTIONS} --binaryFile ${((argv) => {
+                `asc ${argv.input} ${COMPILER_OPTIONS} --runtime ${argv.runtime} --binaryFile ${((argv) => {
                     if (
                         argv.input != BUILD_DEFAULTS.input &&
                         argv.output == BUILD_DEFAULTS.output
@@ -65,7 +70,7 @@ require("yargs").scriptName("massa-sc-scripts")
                 const bytes = include_base64('${argv.zip_of_website}');
                 Storage.set_data('massa_web', bytes);
             }
-            
+
             export function main(_args: string): i32 {
                 createWebsite();
                 generate_event('Uploaded site');
