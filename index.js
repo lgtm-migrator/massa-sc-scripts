@@ -21,7 +21,7 @@ const COMPILER_OPTIONS = "--transform mscl-as-transformer --transform json-as/tr
 require("yargs").scriptName("massa-sc-scripts")
     .usage("$0 <cmd> [args]")
     .command(
-        "build-sc [input] [output]",
+        "build-sc [input] [output] [runtime]",
         "",
         (yargs) => {
             yargs.positional("input", {
