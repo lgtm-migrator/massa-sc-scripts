@@ -39,7 +39,7 @@ require("yargs").scriptName("massa-sc-scripts")
         },
         (argv) =>
             run(
-                `asc ${argv.input} ${COMPILER_OPTIONS} --runtime ${argv.runtime} --binaryFile ${((argv) => {
+                `asc ${argv.input} ${COMPILER_OPTIONS} --runtime ${argv.runtime} --outFile ${((argv) => {
                     if (
                         argv.input != BUILD_DEFAULTS.input &&
                         argv.output == BUILD_DEFAULTS.output
