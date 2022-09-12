@@ -1,6 +1,6 @@
 {
   "name": "massa-sc-scripts",
-  "version": "4.0.5",
+  "version": "4.0.7",
   "repository": "https://github.com/massalabs/massa-sc-scripts",
   "author": "Massa Labs <info@massa.net>",
   "private": false,
@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "yargs": "^17.3.1",
-    "mscl-as-transformer": "0.0.1",
+    "json-as": "~0.2.6",
+    "mscl-as-transformer": "0.0.2",
     "assemblyscript": "~0.19.20"
   },
   "scripts": {
