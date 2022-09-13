@@ -15,6 +15,6 @@
     "assemblyscript": "~0.19.20"
   },
   "scripts": {
-      "test": "npx massa-sc-create test && cd test && npm install --save .. --legacy-peer-deps && npm run build && npm run clean"
+      "test": "npx massa-sc-create test && cd test && npm install .. --legacy-peer-deps && npm run build && npm run clean"
   }
 }
